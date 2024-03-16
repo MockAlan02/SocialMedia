@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SocialMedia.Core.Entities;
@@ -19,7 +17,7 @@ public partial class Post
     public string? Description { get; set; }
     [Column("Imagen")]
     public string? Image { get; set; }
-    public virtual ICollection<Comments>? Comments { get; set; } 
+    public virtual ICollection<Comments>? Comments { get; set; }
 
-    public virtual User? IdUserNavigation { get; set; } 
+    public virtual User? IdUserNavigation { get; set; }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SocialMedia.Core.Entities;
@@ -10,9 +8,9 @@ public partial class User
     [Key]
     [Column("IdUsuario")]
     public int IdUser { get; set; }
-    [Column("Nombre")]
+    [Column("Nombres")]
     public string? FirstName { get; set; }
-    [Column("Apellido")]
+    [Column("Apellidos")]
     public string? LastName { get; set; }
     public string? Email { get; set; }
     [Column("FechaNacimiento")]
@@ -22,7 +20,7 @@ public partial class User
     [Column("Activo")]
     public bool? IsActive { get; set; }
 
-    public virtual ICollection<Comments>? Comments { get; set; } 
+    public virtual ICollection<Comments>? Comments { get; set; }
 
-    public virtual ICollection<Post>? Posts { get; set; } 
+    public virtual ICollection<Post>? Posts { get; set; }
 }

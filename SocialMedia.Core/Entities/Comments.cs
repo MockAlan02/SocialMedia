@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SocialMedia.Core.Entities;
@@ -10,9 +8,11 @@ public partial class Comments
     [Key]
     [Column("IdComentario")]
     public int IdComment { get; set; }
-    [ForeignKey("IdPublicacion")]
+    [ForeignKey("IdPost")]
+    [Column("IdPublicacion")]
     public int IdPost { get; set; }
-    [ForeignKey("IdUsuario")]
+    [ForeignKey("IdUser")]
+    [Column("IdUsuario")]
     public int IdUser { get; set; }
     [Column("Descripcion")]
     public string? Description { get; set; }
@@ -23,5 +23,5 @@ public partial class Comments
 
     public virtual Post? IdPostNavigation { get; set; }
 
-    public virtual User? IdUserNavigation { get; set; } 
+    public virtual User? IdUserNavigation { get; set; }
 }
