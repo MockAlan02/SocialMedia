@@ -1,10 +1,11 @@
 ﻿using SocialMedia.Core.Entities;
+using SocialMedia.Core.QueryFilters;
 
 namespace SocialMedia.Core.Interfaces
 {
     public interface IPostService
     {
-        public Task<IEnumerable<Post>> GetPosts();
+        public IEnumerable<Post> GetPosts(PostQueryFilter filter);
         public Task<Post> GetPost(int id);
         public Task<Post> InsertPost(Post post);
         public Task<bool> UpdatePost(Post post);
