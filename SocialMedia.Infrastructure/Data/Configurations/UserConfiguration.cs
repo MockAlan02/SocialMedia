@@ -8,22 +8,31 @@ namespace SocialMedia.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.HasKey(e => e.IdUser);
-
+            builder.HasKey(e => e.Id);
             builder.ToTable("Usuario");
 
+            builder.Property(e => e.Id)
+                .HasColumnName("IdUsuario");
+
             builder.Property(e => e.LastName)
+                .HasColumnName("Apellidos")
                 .HasMaxLength(50)
                 .IsUnicode(false);
             builder.Property(e => e.Email)
                 .HasMaxLength(30)
                 .IsUnicode(false);
             builder.Property(e => e.FirstName)
+                .HasColumnName("Nombres")
                 .HasMaxLength(50)
                 .IsUnicode(false);
             builder.Property(e => e.Phone)
+                .HasColumnName("Telefono")
                 .HasMaxLength(10)
                 .IsUnicode(false);
+            builder.Property(e => e.DateofBirth)
+                .HasColumnName("FechaNacimiento");
+            builder.Property(e => e.IsActive)
+                .HasColumnName("Activo");
         }
     }
 }

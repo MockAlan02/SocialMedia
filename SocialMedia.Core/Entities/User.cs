@@ -2,22 +2,18 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SocialMedia.Core.Entities;
-[Table("Usuario")]
-public partial class User
+public partial class User : BaseEntity
 {
-    [Key]
-    [Column("IdUsuario")]
-    public int IdUser { get; set; }
-    [Column("Nombres")]
+    public User()
+    {
+        Comments = new HashSet<Comments>();
+        Posts = new HashSet<Post>();
+    }
     public string? FirstName { get; set; }
-    [Column("Apellidos")]
     public string? LastName { get; set; }
     public string? Email { get; set; }
-    [Column("FechaNacimiento")]
     public DateOnly? DateofBirth { get; set; }
-    [Column("Telefono")]
     public string? Phone { get; set; }
-    [Column("Activo")]
     public bool? IsActive { get; set; }
 
     public virtual ICollection<Comments>? Comments { get; set; }

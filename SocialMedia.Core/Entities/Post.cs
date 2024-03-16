@@ -1,21 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Net.Http.Headers;
 
 namespace SocialMedia.Core.Entities;
 [Table("Publicacion")]
-public partial class Post
+public partial class Post : BaseEntity
 {
-    [Key]
-    [Column("IdPublicacion")]
-    public int IdPost { get; set; }
-    [ForeignKey("IdUser")]
-    [Column("IdUsuario")]
+    public Post()
+    {
+        Comments = new HashSet<Comments>();
+    }
+
     public int IdUser { get; set; }
-    [Column("Fecha")]
     public DateTime? Date { get; set; }
-    [Column("Descripcion")]
     public string? Description { get; set; }
-    [Column("Imagen")]
     public string? Image { get; set; }
     public virtual ICollection<Comments>? Comments { get; set; }
 

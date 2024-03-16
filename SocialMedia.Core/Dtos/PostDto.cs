@@ -6,17 +6,11 @@ namespace SocialMedia.Core.Dtos
 {
     public class PostDto
     {
-        [Key]
-        [Column("IdPublicacion")]
-        public int IdPost { get; set; }
-        [ForeignKey("IdUser")]
-        [Column("IdUsuario")]
-        public int IdUser { get; set; }
-        [Column("Fecha")]
+      
+        public int Id { get; set; }
+        public int IdUser { get; set; } 
         public DateTime? Date { get; set; }
-        [Column("Descripcion")]
         public string? Description { get; set; }
-        [Column("Imagen")]
         public string? Image { get; set; }
     }
 }

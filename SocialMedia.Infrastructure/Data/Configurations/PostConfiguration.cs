@@ -8,12 +8,20 @@ namespace SocialMedia.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Post> builder)
         {
-            builder.HasKey(e => e.IdPost);
+            builder.HasKey(e => e.Id);
+            builder.Property(e => e.Id)
+                .HasColumnName("IdPublicacion");
+            builder.Property(e => e.IdUser)
+                .HasColumnName("IdUsuario");
             builder.Property(e => e.Description)
+                .HasColumnName("Descripcion")
                 .HasMaxLength(1000)
                 .IsUnicode(false);
-            builder.Property(e => e.Date).HasColumnType("datetime");
+            builder.Property(e => e.Date)
+                .HasColumnName("Fecha")
+                .HasColumnType("datetime");
             builder.Property(e => e.Image)
+                .HasColumnName("Imagen")
                 .HasMaxLength(500)
                 .IsUnicode(false);
 
