@@ -1,22 +1,28 @@
-﻿using SocialMedia.Core.Entities;
+﻿using Microsoft.Extensions.Options;
+using SocialMedia.Core.CustomEntities;
+using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
+using SocialMedia.Infrastructure.Options;
 
 namespace SocialMedia.Core.Services
 {
     public class PostService : IPostService
     {
         private readonly IUnitOfWork _unitOfWork;
-       
+        private readonly PaginationOptions _paginationOptions;
 
-        public PostService(IUnitOfWork unitOfWork)
+        public PostService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> options)
         {
             _unitOfWork = unitOfWork;
+            _paginationOptions = options.Value;
         }
 
-        public IEnumerable<Post> GetPosts(PostQueryFilter filters)
+        public PageList<Post> GetPosts(PostQueryFilter filters)
         {
+            filters.PageNumber = filters.PageNumber == 0? _paginationOptions.DefaultPageNumber : filters.PageNumber;
+            filters.PageSize = filters.PageSize == 0 ? _paginationOptions.DefaultPageSize : filters.PageSize;
             var post = _unitOfWork.PostRepository.GetAll();
             if (filters.IdUser != null)
             {
@@ -24,13 +30,14 @@ namespace SocialMedia.Core.Services
             }
             else if(filters.Description != null)
             {
-                post = post.Where(post => post.Description.ToLower().Contains(filters.Description.ToLower()));
+                post = post.Where(post => post.Description!.Contains(filters.Description, StringComparison.CurrentCultureIgnoreCase));
             }
             else if(filters.Date != null)
             {
                 post = post.Where(post => post.Date ==  filters.Date);
             }
-            return post;
+            var pagedPost = PageList<Post>.Create(post,filters.PageNumber,filters.PageSize);
+            return pagedPost;
         }
 
         public async Task<Post> GetPost(int id)

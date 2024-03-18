@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SocialMedia.Api.Responses;
+using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
+using SocialMedia.Infrastructure.Interfaces;
 
 namespace SocialMedia.Api.Controllers
 {
@@ -15,19 +18,38 @@ namespace SocialMedia.Api.Controllers
     {
         private readonly IPostService _postService;
         private readonly IMapper _mapper;
-        public PostController(IPostService postService, IMapper mapper)
+        private readonly IUriService _uriService;
+        public PostController(IPostService postService, IMapper mapper, IUriService uriService)
         {
             _postService = postService;
             _mapper = mapper;
+            _uriService = uriService;
         }
-        [HttpGet]
+        [HttpGet(Name = nameof(GetPosts))]
         public IActionResult GetPosts([FromQuery]PostQueryFilter filter)
         {
 
             var post = _postService.GetPosts(filter);
             var posDto = _mapper.Map<IEnumerable<PostDto>>(post);
-            var response = new ApiResponse<IEnumerable<PostDto>>(posDto);
+
+            //Data return to the user
+            var metadata = new Metadata
+            {
+                HasNextPage = post.NextPage,
+                PageSize = post.PageSize,
+                HasPreviousPage = post.HasPreviousPage,
+                TotalCount = post.TotalCount,
+                TotalPage = post.TotalPages,
+                NextPageUrl = _uriService.GetPostPaginationUri(filter, Url.RouteUrl(nameof(GetPosts))!).ToString(),
+                PreviousPageUrl = _uriService.GetPostPaginationUri(filter, Url.RouteUrl(nameof(GetPosts))!).ToString()
+            };
+            var response = new ApiResponse<IEnumerable<PostDto>>(posDto)
+            {
+                Meta = metadata
+            };
+            Response.Headers.Append("X-Pagination",JsonConvert.SerializeObject(metadata));
             return Ok(response);
+        
         }
 
         [HttpGet("{id}")]
