@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SocialMedia.Api.Responses;
@@ -11,20 +12,22 @@ using SocialMedia.Infrastructure.Interfaces;
 
 namespace SocialMedia.Api.Controllers
 {
+    [Authorize]
+    [Produces("Application/json")]
     [ApiController]
     [Route("Api/[Controller]")]
 
-    public class PostController : ControllerBase
+    public class PostController(IPostService postService, IMapper mapper, IUriService uriService) : ControllerBase
     {
-        private readonly IPostService _postService;
-        private readonly IMapper _mapper;
-        private readonly IUriService _uriService;
-        public PostController(IPostService postService, IMapper mapper, IUriService uriService)
-        {
-            _postService = postService;
-            _mapper = mapper;
-            _uriService = uriService;
-        }
+        private readonly IPostService _postService = postService;
+        private readonly IMapper _mapper = mapper;
+        private readonly IUriService _uriService = uriService;
+
+        /// <summary>
+        /// Retrieve all posts
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpGet(Name = nameof(GetPosts))]
         public IActionResult GetPosts([FromQuery]PostQueryFilter filter)
         {
