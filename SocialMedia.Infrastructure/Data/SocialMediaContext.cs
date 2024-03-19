@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using SocialMedia.Core.Entities;
 using SocialMedia.Infrastructure.Data.Configurations;
@@ -22,14 +23,13 @@ public partial class SocialMediaContext : DbContext
     public virtual DbSet<Post> Posts { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<Security> Security { get; set; }
 
-   
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new CommentConfiguration());
-        modelBuilder.ApplyConfiguration(new PostConfiguration());
-        modelBuilder.ApplyConfiguration(new UserConfiguration());
-        OnModelCreatingPartial(modelBuilder);
+        //Level to compiler this gonna help us dont add every table configuration
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

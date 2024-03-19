@@ -71,8 +71,8 @@ namespace SocialMedia.Core.Services
                 throw new BusinessExceptions("Content not Allowed");
             }
              
-             _unitOfWork.PostRepository.Add(post);
-            await _unitOfWork.SaveChangesAsync();
+             _unitOfWork?.PostRepository.Add(post);
+            await _unitOfWork!.SaveChangesAsync();
             return post;
         }
 

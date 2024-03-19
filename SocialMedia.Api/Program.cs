@@ -1,5 +1,6 @@
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SocialMedia.Core.Interfaces;
@@ -30,16 +31,18 @@ builder.Services.AddSwaggerGen();
 //Configure Personalizada en appsettings, mapping values from
 //appsetting section adding data to call PaginationOptions
 builder.Services.Configure<PaginationOptions>(builder.Configuration.GetSection("Pagination"));
+builder.Services.Configure<PasswordOption>(builder.Configuration.GetSection("PasswordOptions"));
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 //Interfaces Services
 builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<ISecurityService, SecurityService>();
 //This is a generic repository using pattern repository
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 //Using pattern UnitOfWork with repository pttern
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-
+builder.Services.AddSingleton<IPasswordHasher,PasswordService>();
 builder.Services.AddSingleton<IUriService>(provider =>
 {
     var accessor = provider.GetRequiredService<IHttpContextAccessor>();
