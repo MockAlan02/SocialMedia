@@ -1,18 +1,7 @@
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using SocialMedia.Core.Interfaces;
-using SocialMedia.Core.Services;
-using SocialMedia.Infrastructure.Data;
 using SocialMedia.Infrastructure.Filters;
-using SocialMedia.Infrastructure.Interfaces;
 using SocialMedia.Infrastructure.Mapping;
-using SocialMedia.Infrastructure.Options;
-using SocialMedia.Infrastructure.Repositories;
-using SocialMedia.Infrastructure.Services;
-using System.Text;
+using SocialMedia.Infrastructure.Extensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,31 +17,18 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Configure Personalizada en appsettings, mapping values from
-//appsetting section adding data to call PaginationOptions
-builder.Services.Configure<PaginationOptions>(builder.Configuration.GetSection("Pagination"));
-builder.Services.Configure<PasswordOption>(builder.Configuration.GetSection("PasswordOptions"));
 
+//Adding Extension Options Configuration
+builder.Services.AddOptions(builder.Configuration);
+
+//Configure Personalizada en appsettings, mapping values from
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
-//Interfaces Services
-builder.Services.AddScoped<IPostService, PostService>();
-builder.Services.AddScoped<ISecurityService, SecurityService>();
-//This is a generic repository using pattern repository
-builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-//Using pattern UnitOfWork with repository pttern
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-builder.Services.AddSingleton<IPasswordHasher,PasswordService>();
-builder.Services.AddSingleton<IUriService>(provider =>
-{
-    var accessor = provider.GetRequiredService<IHttpContextAccessor>();
-    var request = accessor?.HttpContext!.Request;
-    var absoluteUri = string.Concat(request!.Scheme, "://", request.Host.ToUriComponent());
-    return new UriService(absoluteUri);
-});
-
 //Database Connection
-builder.Services.AddDbContext<SocialMediaContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
+builder.Services.AddDbContexts(builder.Configuration);
+//Services
+builder.Services.AddServices();
+
 
 builder.Services.AddControllers().AddNewtonsoftJson(option =>
 {
@@ -60,34 +36,17 @@ builder.Services.AddControllers().AddNewtonsoftJson(option =>
     option.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     option.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
 });
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Authentication:Issuer"],
-        ValidAudience = builder.Configuration["Authentication:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Authentication:SecretKey"]))
-    };
-});
+//Cookies service
+builder.Services.AddAuthenticationService(builder.Configuration);
 
-//Mejorar
-builder.Services.AddMvc(option =>
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
+builder.Services.AddControllersWithViews(options =>
 {
-    //Validatori filter
-    option.Filters.Add<ValidationFilter>();
-}).AddFluentValidation(option =>
-{
-    option.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
-});
+    options.Filters.Add<ValidationFilter>();
+}).AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ValidationFilter>());
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+
 
 var app = builder.Build();
 

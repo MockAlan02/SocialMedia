@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using SocialMedia.Core.Entities;
-using SocialMedia.Infrastructure.Data.Configurations;
 
 namespace SocialMedia.Infrastructure.Data;
 

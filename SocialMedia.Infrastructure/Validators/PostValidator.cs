@@ -8,8 +8,8 @@ namespace SocialMedia.Infrastructure.Validators
         public PostValidator()
         {
             RuleFor(post => post.Description)
-                .NotNull()
-                .Length(10, 500);
+                .NotNull().WithMessage("No puede ser nulo")
+                .Length(10, 500).WithMessage("Longitud invalida");
             RuleFor(post => post.Date)
                 .NotEmpty();
             RuleFor(post => post.IdUser)

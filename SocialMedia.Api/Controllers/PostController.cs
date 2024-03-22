@@ -12,16 +12,16 @@ using SocialMedia.Infrastructure.Interfaces;
 
 namespace SocialMedia.Api.Controllers
 {
-    [Authorize]
+
     [Produces("Application/json")]
     [ApiController]
     [Route("Api/[Controller]")]
 
-    public class PostController(IPostService postService, IMapper mapper, IUriService uriService) : ControllerBase
+    public class PostController(IPostService postService, IMapper mapper) : ControllerBase
     {
         private readonly IPostService _postService = postService;
         private readonly IMapper _mapper = mapper;
-        private readonly IUriService _uriService = uriService;
+      
 
         /// <summary>
         /// Retrieve all posts
@@ -43,8 +43,8 @@ namespace SocialMedia.Api.Controllers
                 HasPreviousPage = post.HasPreviousPage,
                 TotalCount = post.TotalCount,
                 TotalPage = post.TotalPages,
-                NextPageUrl = _uriService.GetPostPaginationUri(filter, Url.RouteUrl(nameof(GetPosts))!).ToString(),
-                PreviousPageUrl = _uriService.GetPostPaginationUri(filter, Url.RouteUrl(nameof(GetPosts))!).ToString()
+           /*     NextPageUrl = _uriService.GetPostPaginationUri(filter, Url.RouteUrl(nameof(GetPosts))!).ToString(),
+                PreviousPageUrl = _uriService.GetPostPaginationUri(filter, Url.RouteUrl(nameof(GetPosts))!).ToString()*/
             };
             var response = new ApiResponse<IEnumerable<PostDto>>(posDto)
             {

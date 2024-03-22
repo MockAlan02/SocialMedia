@@ -1,8 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace SocialMedia.Core.Dtos
+﻿namespace SocialMedia.Core.Dtos
 {
     public class PostDto
     {
